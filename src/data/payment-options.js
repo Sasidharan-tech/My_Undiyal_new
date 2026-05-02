@@ -1,0 +1,38 @@
+export const paymentOptions = [
+  {
+    id: "weekly",
+    badge: "Lowest",
+    cadence: "weekly",
+    perLabel: "weeks",
+    installmentsSource: "weekly",
+    badgeClass: "bg-[#E6F1FB] text-[#0C4FA1]",
+    arrowClass: "text-black",
+  },
+  {
+    id: "popular",
+    badge: "Most Popular",
+    cadence: "weekly",
+    perLabel: "weeks",
+    installmentsSource: "weekly",
+    badgeClass: "bg-[#185FA5] text-white",
+    arrowClass: "text-black",
+  },
+  {
+    id: "monthly",
+    badge: "Easy Monthly",
+    cadence: "monthly",
+    perLabel: "months",
+    installmentsSource: "monthly",
+    badgeClass: "bg-[#EAF3DE] text-[#27500A]",
+    arrowClass: "text-black",
+  },
+  {
+    id: "finish-early",
+    badge: "Finish Early",
+    cadence: "monthly",
+    perLabel: "months",
+    installmentsSource: "monthly",
+    badgeClass: "bg-[#EEEDFE] text-[#3C3489]",
+    arrowClass: "text-black",
+  },
+];

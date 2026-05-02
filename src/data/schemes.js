@@ -1,0 +1,33 @@
+export const schemeOptions = [
+  {
+    id: "immediate",
+    type: "Immediate Purchase",
+    subtitle: "",
+    badge: "Fastest",
+    duration: "on-time",
+    priceMode: "full",
+    installments: 1,
+    deliveryInfo: "Delivery within 7 Days",
+    deliveryIcon: "/icons/cart/delivery_icon.png",
+  },
+  {
+    id: "diwali-gold",
+    type: "Diwali Purchase",
+    subtitle: "WEEKLY / MONTHLY INSTALMENT",
+    duration: "53 Weeks",
+    priceMode: "weekly",
+    installments: 53,
+    deliveryInfo: "Delivery within 7 Days",
+    deliveryIcon: "/icons/cart/sell_icon.png",
+  },
+  {
+    id: "diwali-green",
+    type: "Diwali Purchase",
+    subtitle: "WEEKLY / MONTHLY INSTALMENT",
+    duration: "53 Weeks",
+    priceMode: "weekly",
+    installments: 53,
+    deliveryInfo: "Delivery within 7 Days",
+    deliveryIcon: "/icons/cart/add_icon.png",
+  },
+];
