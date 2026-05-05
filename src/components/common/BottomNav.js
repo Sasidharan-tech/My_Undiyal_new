@@ -6,14 +6,14 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { icon: "/icons/common/home_icon.png", label: "Home", href: "/" },
-  { icon: "/icons/common/category_icon.png", label: "Category", href: "/categories" },
-  { icon: "/icons/common/wishlist_icon.png", label: "Wishlist", href: "/wishlist" },
-  { icon: "/icons/common/order_icon.png", label: "Order", href: "/orders" },
+  { icon: "/icons/navbar_icons/home_icon.png", label: "Home", href: "/" },
+  { icon: "/icons/navbar_icons/category_icon.png", label: "Category", href: "/categories" },
+  { icon: "/icons/navbar_icons/wishlist_icon.png", label: "Wishlist", href: "/wishlist" },
+  { icon: "/icons/navbar_icons/order_icon.png", label: "Order", href: "/orders" },
 ];
 
 const schemeAction = {
-  icon: "/icons/common/scheme_icon.png",
+  icon: "/icons/navbar_icons/scheme_icon.png",
   label: "Scheme",
   href: "/FestivalScheme",
 };
@@ -97,7 +97,7 @@ export default function BottomNav() {
                             maskPosition: "center",
                             WebkitMaskSize: "contain",
                             maskSize: "contain",
-                            backgroundColor: showActive ? "#ffffff" : "#8d8d8d",
+                            backgroundColor: showActive ? "white" : "#3A3A3A",
                           }}
                         />
                       ) : (
@@ -110,7 +110,7 @@ export default function BottomNav() {
                         />
                       )}
                     </span>
-                    <span>{item.label}</span>
+                    <span className="text-[#7F7F7F]">{item.label}</span>
                   </span>
                 </Link>
                 {index === 1 ? <span className="w-22 shrink-0" aria-hidden="true" /> : null}
