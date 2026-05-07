@@ -5,6 +5,8 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Navigation } from "lucide-react";
 import { useShop } from "@/context/ShopContext";
+import { useCreateData } from "@/hooks/crud/useCreateData";
+import { getCurrentPosition, reverseGeocode } from "@/services/location.service";
 
 const LocationPickerMap = dynamic(() => import("./LocationPickerMap"), {
   ssr: false,
@@ -68,82 +70,40 @@ export default function AddAddressForm({ returnTo = "/order-summary" }) {
     };
   }
 
+  const { createData, loading: isSaving } = useCreateData((addressPayload) => {
+    addSavedAddress(addressPayload);
+    router.push("/addresses");
+  });
+
   function handleSubmit(event) {
     event.preventDefault();
     if (!canSave) {
       return;
     }
 
-    addSavedAddress({
+    createData({
       label: form.label.trim(),
       street: `${form.buildingFloor.trim()}, ${form.street.trim()}`,
       city: form.areaLocality.trim(),
       iconType: getIconType(form.label),
-    });
-
-     router.push("/addresses");
-  }
-
-  async function getReadableAddress(latitude, longitude) {
-    const fallback = {
-      label: "Current Location",
-      street: `Lat ${latitude.toFixed(5)}, Lng ${longitude.toFixed(5)}`,
-      city: "Live Location",
-    };
-
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
-      );
-
-      if (!response.ok) {
-        return fallback;
-      }
-
-      const data = await response.json();
-      const address = data.address || {};
-
-      const lineOneParts = [
-        address.house_number,
-        address.road || address.pedestrian || address.neighbourhood,
-      ].filter(Boolean);
-
-      const cityParts = [
-        address.suburb || address.village || address.town || address.city,
-        address.state,
-      ].filter(Boolean);
-
-      return {
-        label: "Current Location",
-        street: lineOneParts.length > 0 ? lineOneParts.join(", ") : fallback.street,
-        city: cityParts.length > 0 ? cityParts.join(", ") : fallback.city,
-      };
-    } catch {
-      return fallback;
-    }
+    }).catch(() => {});
   }
 
   function handleChooseLocation() {
     setIsChoosingOnMap(true);
 
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
+    getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 8000,
+      maximumAge: 0,
+    })
+      .then((position) => {
         const { latitude, longitude } = position.coords;
         const coords = { lat: latitude, lng: longitude };
         setMapCenter(coords);
         setSelectedCoords(coords);
-      },
-      () => {},
-      {
-        enableHighAccuracy: true,
-        timeout: 8000,
-        maximumAge: 0,
-      },
-    );
+      })
+      .catch(() => {});
   }
 
   async function handleConfirmLocation() {
@@ -152,7 +112,7 @@ export default function AddAddressForm({ returnTo = "/order-summary" }) {
     }
 
     setIsSelectingLocation(true);
-    const locationAddress = await getReadableAddress(
+    const locationAddress = await reverseGeocode(
       selectedCoords.lat,
       selectedCoords.lng,
     );
@@ -278,14 +238,14 @@ export default function AddAddressForm({ returnTo = "/order-summary" }) {
 
         <button
           type="submit"
-          disabled={!canSave}
+          disabled={!canSave || isSaving}
           className={`h-12 w-full rounded-xl text-base font-semibold text-white transition ${
-            canSave
+            canSave && !isSaving
               ? "bg-[#C1683A] active:scale-[0.99]"
               : "bg-[#E8A98A]"
           }`.trim()}
         >
-          Save Address
+          {isSaving ? "Saving..." : "Save Address"}
         </button>
       </form>
     </section>

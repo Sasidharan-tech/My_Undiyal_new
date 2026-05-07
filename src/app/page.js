@@ -5,7 +5,7 @@ import Categories from "../components/sections/home/Categories";
 import ProductGrid from "../components/sections/product/ProductGrid";
 import SearchBar from "../components/common/SearchBar";
 import { products } from "@/data/products";
-import Link from "next/link";
+import { NavLink, APP_ROUTES } from "@/components/common";
 import Image from "next/image";
 import { getFeaturedOrder } from "@/data/orders";
 
@@ -40,9 +40,9 @@ export default function HomePage() {
             />
             New Arraival
           </h3>
-          <Link href="/new-arrivals" className="text-sm font-medium text-slate-900">
+          <NavLink href={APP_ROUTES.NEW_ARRIVALS} className="text-sm font-medium text-slate-900">
             View All
-          </Link>
+          </NavLink>
         </div>
 
         <ProductGrid products={newArrivalProducts} />

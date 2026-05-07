@@ -2,16 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback } from "react";
 import MainLayout from "@/layout/MainLayout";
 import CurrencyAmount from "@/components/ui/CurrencyAmount";
 import DeletePopup from "@/components/ui/DeletePopup";
 import { useShop } from "@/context/ShopContext";
 import { useRouter } from "next/navigation";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
+import { useDeleteData } from "@/hooks/crud/useDeleteData";
 
 export default function OrderSummaryPage() {
   const router = useRouter();
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const {
+    target: deleteTarget,
+    isOpen,
+    openDialog,
+    closeDialog,
+  } = useConfirmDialog();
   const {
     cart,
     address,
@@ -26,20 +33,20 @@ export default function OrderSummaryPage() {
     removeFromCart,
   } = useShop();
 
-  const handleOpenDeletePopup = (item) => {
-    setDeleteTarget(item);
-  };
+  const handleOpenDeletePopup = useCallback((item) => {
+    openDialog(item);
+  }, [openDialog]);
 
-  const handleCancelDelete = () => {
-    setDeleteTarget(null);
-  };
-
-  const handleConfirmDelete = () => {
+  const { deleteData } = useDeleteData(async () => {
     if (deleteTarget?.id) {
       removeFromCart(deleteTarget.id);
     }
-    setDeleteTarget(null);
-  };
+    closeDialog();
+  });
+
+  const handleConfirmDelete = useCallback(() => {
+    deleteData().catch(() => {});
+  }, [deleteData]);
 
   const orderSummaryIcons = {
     remove: "/icons/cart/delete_icon.png",
@@ -357,8 +364,8 @@ export default function OrderSummaryPage() {
         </div>
 
         <DeletePopup
-          open={Boolean(deleteTarget)}
-          onCancel={handleCancelDelete}
+          open={isOpen}
+          onCancel={closeDialog}
           onConfirm={handleConfirmDelete}
           title="Are your sure your want to delete this product?"
           showImage
@@ -369,7 +376,7 @@ export default function OrderSummaryPage() {
         />
         {/* Fixed bottom bar with Continue action */}
         <div className="fixed inset-x-0 bottom-0 z-40 bg-white/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 shadow-[0_-8px_22px_rgba(15,23,42,0.08)]">
-          <div className="mx-auto max-w-103">
+          <div className="mx-auto max-w-120">
             <Link
               href="/payment"
               className="inline-flex h-13.5 w-full items-center justify-center rounded-[10px] bg-[#CC7A4B] px-5 text-base font-medium leading-6 text-white"

@@ -11,7 +11,7 @@ export default function BottomBar({
   disabled = false,
 }) {
   return (
-    <div className="fixed bottom-0 left-1/2 z-40 flex h-18.75 w-full max-w-103 -translate-x-1/2 items-center justify-between bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2">
+    <div className="fixed bottom-0 left-1/2 z-40 flex h-18.75 w-[min(100vw,var(--app-max-width))] -translate-x-1/2 items-center justify-between bg-white px-4 py-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] sm:px-5">
       <div className="min-w-0">
         <small className="block text-base leading-6 font-normal text-[#CC7A4B]">
           {label}
@@ -28,7 +28,7 @@ export default function BottomBar({
       {href ? (
         <Link
           href={disabled ? "#" : href}
-          className={`inline-flex h-11.25 w-38.25 items-center justify-center rounded-[10px] bg-[#CC7A4B] text-base font-semibold leading-6 text-white ${disabled ? "pointer-events-none opacity-50" : ""}`.trim()}
+          className={`inline-flex h-11.25 min-w-32 items-center justify-center rounded-[10px] bg-[#CC7A4B] px-4 text-base font-semibold leading-6 text-white sm:min-w-38.25 ${disabled ? "pointer-events-none opacity-50" : ""}`.trim()}
           aria-disabled={disabled}
           onClick={(event) => {
             if (disabled) {

@@ -1,0 +1,7 @@
+export default function ErrorState({ message = "Something went wrong." }) {
+  return (
+    <p className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      {message}
+    </p>
+  );
+}

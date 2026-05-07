@@ -50,8 +50,8 @@ export default function BottomNav() {
       className="pointer-events-none fixed inset-x-0 bottom-0 z-40 pb-[env(safe-area-inset-bottom)]"
       aria-label="Primary mobile navigation"
     >
-      <div className="pointer-events-auto relative w-full">
-        <div className="relative flex h-22.5 items-end justify-between rounded-t-2xl border-t border-[#ece4db] bg-white px-3 pb-3 pt-4 shadow-[0_-8px_24px_rgba(26,22,18,0.12)]">
+      <div className="pointer-events-auto relative mx-auto w-full max-w-[var(--app-max-width)] px-2 sm:px-3">
+        <div className="relative flex h-16 items-end justify-between rounded-t-3xl border-t border-[#ece4db] bg-white px-2 pb-2.5 pt-3 shadow-[0_-8px_24px_rgba(26,22,18,0.12)] sm:h-18 sm:px-3 sm:pb-3 sm:pt-4">
           {navItems.map((item, index) => {
             const isActive = isActivePath(item.href);
             const isPressed = pressedHref === item.href;
@@ -73,12 +73,12 @@ export default function BottomNav() {
                   onTouchCancel={() => setPressedHref(null)}
                 >
                   <span
-                    className={`inline-flex min-w-14 flex-col items-center justify-center gap-1 py-1 text-[0.82rem] font-medium leading-none transition-transform duration-200 group-active:scale-95 ${
+                    className={`inline-flex min-w-0 flex-col items-center justify-center gap-0.5 py-1 text-[11px] font-medium leading-none transition-transform duration-200 group-active:scale-95 sm:min-w-14 sm:gap-1 sm:text-[0.82rem] ${
                       showActive ? "text-[#d17a3a]" : "text-[#8d8d8d]"
                     }`.trim()}
                   >
                     <span
-                      className={`inline-flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 ${
+                      className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 sm:h-9 sm:w-9 ${
                         showActive
                           ? "bg-[#CC7A4B] shadow-[0_4px_12px_rgba(204,122,75,0.35)]"
                           : "bg-transparent group-active:bg-[#CC7A4B]"
@@ -87,7 +87,7 @@ export default function BottomNav() {
                       {isImageIcon ? (
                         <span
                           aria-hidden="true"
-                          className="h-5.5 w-5.5 bg-current transition-colors duration-200"
+                          className="h-5 w-5 bg-current transition-colors duration-200 sm:h-5.5 sm:w-5.5"
                           style={{
                             WebkitMaskImage: `url(${item.icon})`,
                             maskImage: `url(${item.icon})`,
@@ -113,7 +113,7 @@ export default function BottomNav() {
                     <span className="text-[#7F7F7F]">{item.label}</span>
                   </span>
                 </Link>
-                {index === 1 ? <span className="w-22 shrink-0" aria-hidden="true" /> : null}
+                {index === 1 ? <span className="w-12 shrink-0 sm:w-22" aria-hidden="true" /> : null}
               </Fragment>
             );
           })}
@@ -121,12 +121,12 @@ export default function BottomNav() {
 
         <Link
           href={schemeAction.href}
-          className="group absolute left-1/2 -top-7.5 z-50 -translate-x-1/2"
+          className="group absolute left-1/2 -top-3.5 z-50 -translate-x-1/2 sm:-top-4"
           aria-current={isSchemeActive ? "page" : undefined}
           aria-label={schemeAction.label}
         >
           <span
-            className={`inline-flex h-21.5 w-21.5 items-center justify-center rounded-full border-4 p-1 transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95 ${
+            className={`inline-flex h-18 w-18 items-center justify-center rounded-full border-4 p-1 transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95 sm:h-21.5 sm:w-21.5 sm:border-6 ${
               isSchemeActive
                 ? "border-[#CC7A4B] bg-[#CC7A4B] shadow-[0_8px_18px_rgba(204,122,75,0.35)]"
                 : "border-white bg-white group-active:border-[#CC7A4B] group-active:bg-[#CC7A4B] group-active:shadow-[0_8px_18px_rgba(204,122,75,0.35)]"
@@ -135,8 +135,8 @@ export default function BottomNav() {
             <Image
               src={schemeAction.icon}
               alt={schemeAction.label}
-              width={70}
-              height={70}
+              width={60}
+              height={60}
               priority
               className="h-full w-full object-contain"
             />

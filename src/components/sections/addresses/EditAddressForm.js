@@ -79,12 +79,16 @@ export default function EditAddressForm({ addressId, returnTo = "/order-summary"
 
     const parsedStreet = splitStreet(existingAddress.street);
 
-    setForm({
-      label: existingAddress.label || "",
-      buildingFloor: parsedStreet.buildingFloor,
-      street: parsedStreet.street,
-      areaLocality: existingAddress.city || "",
-    });
+    const timer = window.setTimeout(() => {
+      setForm({
+        label: existingAddress.label || "",
+        buildingFloor: parsedStreet.buildingFloor,
+        street: parsedStreet.street,
+        areaLocality: existingAddress.city || "",
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [existingAddress]);
 
   const canSave = useMemo(() => {

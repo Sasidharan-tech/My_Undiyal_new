@@ -5,12 +5,12 @@ const offers = [
   {
     id: "diwali",
     title: "Diwali Offer",
-    image: "/schemes/diwali.png",
+    image: "/schemes/Diwali Scheme.png",
   },
   {
     id: "pongal",
     title: "Pongal Offer",
-    image: "/schemes/pongal.png",
+    image: "/schemes/Pongal Scheme.png",
   },
 ];
 

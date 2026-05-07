@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const STORAGE_KEYS = {
@@ -13,6 +13,15 @@ const STORAGE_KEYS = {
 const AuthContext = createContext(undefined);
 
 const getStoredAuth = () => {
+    if (typeof window === "undefined") {
+        return {
+            isAuthenticated: false,
+            user: null,
+            node: null,
+            token: null,
+        };
+    }
+
     try {
         const storedLogin = localStorage.getItem(STORAGE_KEYS.login) === "true";
         const storedUserRaw = localStorage.getItem(STORAGE_KEYS.user);
@@ -46,12 +55,7 @@ const getStoredAuth = () => {
 };
 
 export function AuthProvider({ children }) {
-    const [authState, setAuthState] = useState({
-        isAuthenticated: false,
-        user: null,
-        node: null,
-        token: null,
-    });
+    const [authState, setAuthState] = useState(() => getStoredAuth());
     const [isHydrated, setIsHydrated] = useState(false);
     const [branchCode] = useState(1);
     const [counterCode] = useState(1);
@@ -60,8 +64,10 @@ export function AuthProvider({ children }) {
     const router = useRouter();
 
     useEffect(() => {
-        setAuthState(getStoredAuth());
-        setIsHydrated(true);
+        const timer = window.setTimeout(() => {
+            setAuthState(getStoredAuth());
+            setIsHydrated(true);
+        }, 0);
 
         const handleStorageChange = (event) => {
             if (
@@ -75,10 +81,13 @@ export function AuthProvider({ children }) {
         };
 
         window.addEventListener("storage", handleStorageChange);
-        return () => window.removeEventListener("storage", handleStorageChange);
+        return () => {
+            window.clearTimeout(timer);
+            window.removeEventListener("storage", handleStorageChange);
+        };
     }, []);
 
-    const login = (userData, token, options = {}) => {
+    const login = useCallback((userData, token, options = {}) => {
         const node = options.node ?? 1;
 
         localStorage.setItem(STORAGE_KEYS.login, "true");
@@ -92,9 +101,9 @@ export function AuthProvider({ children }) {
             node,
             token,
         });
-    };
+    }, []);
 
-    const logout = ({ redirectTo = "/login" } = {}) => {
+    const logout = useCallback(({ redirectTo = "/login" } = {}) => {
         localStorage.removeItem(STORAGE_KEYS.login);
         localStorage.removeItem(STORAGE_KEYS.user);
         localStorage.removeItem(STORAGE_KEYS.node);
@@ -109,9 +118,9 @@ export function AuthProvider({ children }) {
         });
 
         router.replace(redirectTo);
-    };
+    }, [router]);
 
-    const updateUser = (userPatch) => {
+    const updateUser = useCallback((userPatch) => {
         setAuthState((current) => {
             if (!current.user) {
                 return current;
@@ -129,7 +138,7 @@ export function AuthProvider({ children }) {
                 user: nextUser,
             };
         });
-    };
+    }, []);
 
     const value = useMemo(
         () => ({
@@ -154,6 +163,9 @@ export function AuthProvider({ children }) {
             warehouseCode,
             fyCode,
             isHydrated,
+            login,
+            logout,
+            updateUser,
         ]
     );
 

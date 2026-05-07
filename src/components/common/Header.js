@@ -15,9 +15,9 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-20  bg-white px-4 py-3">
-      <div className="flex items-center justify-between">
-        <div aria-label="My Undiyal" className="w-40.5">
+    <header className="sticky top-0 z-20 bg-white/95 px-3 py-3 backdrop-blur-sm sm:px-4">
+      <div className="mx-auto flex w-full max-w-[var(--app-max-width)] items-center justify-between gap-3">
+        <div aria-label="My Undiyal" className="w-[clamp(122px,40vw,170px)] shrink-0">
           <Image
             src="/logo/logo.png"
             alt="My Undiyal"
@@ -30,10 +30,11 @@ export default function Header() {
 
         <Link
           href="/profile"
-          className="inline-flex h-12.5 w-12.5 shrink-0 items-center justify-center rounded-full bg-[#fff2ea] text-[#cc7a4b]"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff2ea] text-[#cc7a4b] transition active:scale-95 sm:h-12 sm:w-12"
           aria-label="Open profile"
         >
-          <CircleUserRound size={24} />
+          <CircleUserRound size={20} className="sm:hidden" />
+          <CircleUserRound size={24} className="hidden sm:block" />
         </Link>
       </div>
     </header>

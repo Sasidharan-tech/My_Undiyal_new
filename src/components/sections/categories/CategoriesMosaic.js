@@ -1,5 +1,5 @@
-import Link from "next/link";
 import Image from "next/image";
+import { NavLink, APP_ROUTES } from "@/components/common";
 
 const fallbackById = {
   electronics: {
@@ -50,7 +50,7 @@ export default function CategoriesMosaic({ categories }) {
       className="-mx-4 space-y-6 px-4 py-6"
       aria-label="Product categories"
     >
-      <Link href={electronics.href} className="block rounded-xl">
+      <NavLink href={APP_ROUTES.CATEGORY_DETAIL(electronics.id)} className="block rounded-xl">
         <div className="relative h-43.25 w-full overflow-hidden rounded-xl bg-[#F5F0EB]">
           <Image
             src={electronics.image}
@@ -64,29 +64,29 @@ export default function CategoriesMosaic({ categories }) {
         <p className="mt-2 text-lg font-medium text-gray-800">
           {electronics.name}
         </p>
-      </Link>
+      </NavLink>
 
       <div className="grid grid-cols-3 gap-3">
         <CategoryCard
           label={furniture.name}
+          id={furniture.id}
           src={furniture.image}
-          href={furniture.href}
         />
         <CategoryCard
           label={grocery.name}
+          id={grocery.id}
           src={grocery.image}
-          href={grocery.href}
         />
         <CategoryCard
           label={crackers.name}
+          id={crackers.id}
           src={crackers.image}
-          href={crackers.href}
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <CategoryCard label="Copper" src={coppers.image} href={coppers.href} />
-        <CategoryCard label={brass.name} src={brass.image} href={brass.href} />
+        <CategoryCard label="Copper" id={coppers.id} src={coppers.image} />
+        <CategoryCard label={brass.name} id={brass.id} src={brass.image} />
       </div>
     </section>
   );
@@ -94,12 +94,12 @@ export default function CategoriesMosaic({ categories }) {
 
 function CategoryCard({
   label,
+  id,
   src,
-  href,
   imageBoxClassName = "aspect-[6/5]",
 }) {
   return (
-    <Link href={href} className="flex flex-col items-center gap-2">
+    <NavLink href={APP_ROUTES.CATEGORY_DETAIL(id)} className="flex flex-col items-center gap-2">
       <div
         className={`relative ${imageBoxClassName} w-full overflow-hidden rounded-xl bg-[#F5F0EB]`.trim()}
       >
@@ -114,6 +114,6 @@ function CategoryCard({
       <p className="min-h-5 text-center text-sm font-medium leading-5 text-gray-800">
         {label}
       </p>
-    </Link>
+    </NavLink>
   );
 }

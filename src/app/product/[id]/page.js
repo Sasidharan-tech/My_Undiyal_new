@@ -258,7 +258,7 @@ export default function ProductDetailsPage() {
       <MainLayout
         title="Product"
         backHref="/categories"
-        className="max-w-103 bg-[#fffdf9]"
+        className="max-w-120 bg-[#fffdf9]"
         contentClassName="px-4 pb-6"
       >
         <div>
@@ -285,7 +285,7 @@ export default function ProductDetailsPage() {
     <MainLayout
       title="Product"
       backHref="/categories"
-      className="relative max-w-103 overflow-x-hidden bg-[#fffdf9] pb-[calc(122px+env(safe-area-inset-bottom))]"
+      className="relative max-w-120 overflow-x-hidden bg-[#fffdf9] pb-[calc(122px+env(safe-area-inset-bottom))]"
       contentClassName="px-4 pb-6"
     >
       <div>
@@ -577,10 +577,10 @@ export default function ProductDetailsPage() {
       )}
 
       <div className="fixed inset-x-0 bottom-0 z-40 bg-white/95 pt-2 pb-[calc(env(safe-area-inset-bottom)+8px)] shadow-[0_-8px_22px_rgba(15,23,42,0.08)]">
-        <div className="mx-auto w-full max-w-103">
+        <div className="mx-auto w-full max-w-120">
           <button
             type="button"
-            className="mx-4 mb-3 inline-flex min-h-14 w-[calc(100%-32px)] items-center justify-center gap-2 rounded-xl bg-[#cc7a4b] text-lg font-medium text-white transition-transform duration-150 active:scale-95"
+            className="mx-4 mb-3 inline-flex min-h-14 w-[calc(100%-32px)] items-center justify-center gap-2 rounded-xl bg-[#CC7A4B] text-lg font-medium text-white transition-transform duration-150 active:scale-95"
             onClick={() => {
               setPaymentType("weekly");
               setScheme(null);

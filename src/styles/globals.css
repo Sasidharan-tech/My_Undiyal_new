@@ -248,3 +248,59 @@ select {
     transform: scale(1);
   }
 }
+
+/* Explore button styles (converted from provided Figma CSS) */
+.explore-button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 33px;
+  padding: 10px;
+  width: 116px;
+  border-radius: 30px;
+  box-sizing: border-box;
+  position: relative;
+  background: linear-gradient(91deg, rgba(249,185,81,1) 0%, rgba(223,138,0,1) 100%);
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.explore-button .text-wrapper {
+  color: #ffffff;
+  font-family: "Poppins-Medium", Helvetica;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: normal;
+  margin-bottom: -1px;
+  margin-top: -4px;
+  position: relative;
+  width: fit-content;
+  z-index: 2;
+}
+
+.explore-button::before {
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  background: linear-gradient(125deg, rgba(254,230,163,1) 0%, rgba(206,128,0,1) 100%);
+  border-radius: 30px;
+  content: "";
+  inset: 0;
+  padding: 1.5px;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.explore-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(223,138,0,0.18);
+}
+
+.explore-button:active {
+  transform: translateY(1px);
+}
+

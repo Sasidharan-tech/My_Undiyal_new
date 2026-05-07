@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useMemo } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -9,11 +9,15 @@ import {
   MapPin,
   Navigation,
   Pencil,
-  Search,
   Trash2,
 } from "lucide-react";
 import { useShop } from "@/context/ShopContext";
 import DeletePopup from "@/components/ui/DeletePopup";
+import SearchInput from "@/components/common/SearchInput";
+import EmptyState from "@/components/common/EmptyState";
+import { useSearch } from "@/hooks/useSearch";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
+import { getCurrentPosition, reverseGeocode } from "@/services/location.service";
 
 function AddressIcon({ iconType }) {
   if (iconType === "navigation") {
@@ -94,10 +98,15 @@ function AddressCard({ address, onSelect, onEdit, onDelete }) {
 }
 
 export default function AddressBook({ returnTo: returnToProp = "" }) {
-  const [pendingDelete, setPendingDelete] = useState(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = returnToProp || searchParams.get("returnTo") || "/order-summary";
+  const {
+    target: pendingDelete,
+    isOpen,
+    openDialog,
+    closeDialog,
+  } = useConfirmDialog();
 
   const {
     savedAddresses,
@@ -107,36 +116,51 @@ export default function AddressBook({ returnTo: returnToProp = "" }) {
     deleteSavedAddress,
   } = useShop();
 
-  function handleAddAddress() {
-    router.push(`/addresses/new?returnTo=${encodeURIComponent(returnTo)}`);
-  }
+  const searchSelector = useCallback(
+    (address) => `${address.label || ""} ${address.street || ""} ${address.city || ""}`,
+    [],
+  );
 
-  function handleEditAddress(address) {
+  const { searchText, setSearchText, filteredItems: filteredAddresses } = useSearch(
+    savedAddresses,
+    searchSelector,
+  );
+
+  const handleAddAddress = useCallback(() => {
+    router.push(`/addresses/new?returnTo=${encodeURIComponent(returnTo)}`);
+  }, [router, returnTo]);
+
+  const handleEditAddress = useCallback((address) => {
     router.push(
       `/addresses/${encodeURIComponent(address.id)}/edit?returnTo=${encodeURIComponent(returnTo)}`,
     );
-  }
+  }, [router, returnTo]);
 
-  function handleSelectAddress(addressId) {
+  const handleSelectAddress = useCallback((addressId) => {
     selectSavedAddress(addressId);
     router.push(returnTo);
-  }
+  }, [router, returnTo, selectSavedAddress]);
 
-  function handleDeleteAddress(address) {
-    setPendingDelete(address);
-  }
+  const handleDeleteAddress = useCallback((address) => {
+    openDialog(address);
+  }, [openDialog]);
 
-  function handleCancelDelete() {
-    setPendingDelete(null);
-  }
-
-  function handleConfirmDelete() {
+  const handleConfirmDelete = useCallback(() => {
     if (pendingDelete?.id) {
       deleteSavedAddress(pendingDelete.id);
     }
 
-    setPendingDelete(null);
-  }
+    closeDialog();
+  }, [closeDialog, deleteSavedAddress, pendingDelete]);
+
+  const locationErrorMessages = useMemo(
+    () => ({
+      1: "Location permission denied. Please allow access in your browser settings.",
+      2: "Unable to determine your location. Please try again.",
+      3: "Location request timed out. Please try again.",
+    }),
+    [],
+  );
 
   function handleCurrentLocation() {
     const applyCurrentLocation = (street, city) => {
@@ -162,60 +186,21 @@ export default function AddressBook({ returnTo: returnToProp = "" }) {
       router.push(returnTo);
     };
 
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
+    getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 6000,
+      maximumAge: 0,
+    })
+      .then(async (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
 
-        (async () => {
-          try {
-            const res = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`,
-            );
-
-            if (res.ok) {
-              const data = await res.json();
-              const display = data.display_name || `Lat ${lat.toFixed(4)}, Lng ${lon.toFixed(4)}`;
-              const city =
-                data.address?.city ||
-                data.address?.town ||
-                data.address?.village ||
-                data.address?.county ||
-                "Live Location";
-
-              applyCurrentLocation(display, city);
-              return;
-            }
-          } catch (e) {
-            // fall through to coordinate fallback
-          }
-
-          applyCurrentLocation(
-            `Lat ${lat.toFixed(4)}, Lng ${lon.toFixed(4)}`,
-            "Live Location",
-          );
-        })();
-      },
-      (error) => {
-        const messages = {
-          1: "Location permission denied. Please allow access in your browser settings.",
-          2: "Unable to determine your location. Please try again.",
-          3: "Location request timed out. Please try again.",
-        };
-
-        alert(messages[error.code] || "Failed to get your location.");
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 6000,
-        maximumAge: 0,
-      },
-    );
+        const geocoded = await reverseGeocode(lat, lon);
+        applyCurrentLocation(geocoded.displayName || geocoded.street, geocoded.city);
+      })
+      .catch((error) => {
+        alert(locationErrorMessages[error.code] || error.message || "Failed to get your location.");
+      });
   }
 
   return (
@@ -225,16 +210,13 @@ export default function AddressBook({ returnTo: returnToProp = "" }) {
           <label htmlFor="address-search" className="sr-only">
             Search your location
           </label>
-          <div className="flex h-12.5 items-center gap-3 rounded-full bg-[#FFF2EA] px-4 text-[#cc7a4b]">
-            <Search size={24} aria-hidden="true" />
-            <input
-              id="address-search"
-              type="search"
-              placeholder="Search your location"
-              className="h-full w-full bg-transparent text-sm font-normal text-[#904910]/60 outline-none placeholder:text-[#904910]/30"
-              aria-label="Search your location"
-            />
-          </div>
+          <SearchInput
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+            placeholder="Search your location"
+            ariaLabel="Search your location"
+            className="h-12.5 gap-3 text-[#cc7a4b]"
+          />
 
           <button
             type="button"
@@ -266,7 +248,7 @@ export default function AddressBook({ returnTo: returnToProp = "" }) {
           </h2>
 
           <div className="mt-3 bg-transparent">
-            {savedAddresses.map((address) => (
+            {filteredAddresses.map((address) => (
               <AddressCard
                 key={address.id}
                 address={address}
@@ -275,13 +257,19 @@ export default function AddressBook({ returnTo: returnToProp = "" }) {
                 onDelete={() => handleDeleteAddress(address)}
               />
             ))}
+
+            {filteredAddresses.length === 0 ? (
+              <div className="px-3 py-3">
+                <EmptyState message="No addresses found for your search." />
+              </div>
+            ) : null}
           </div>
         </div>
       </section>
 
       <DeletePopup
-        open={Boolean(pendingDelete)}
-        onCancel={handleCancelDelete}
+        open={isOpen}
+        onCancel={closeDialog}
         onConfirm={handleConfirmDelete}
         title="Are you sure you want to delete this address?"
         addressTag={pendingDelete?.label || ""}

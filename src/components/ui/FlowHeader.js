@@ -16,7 +16,7 @@ export default function FlowHeader({
       className={`sticky top-0 z-30 bg-[#CC7A4B] ${headerClassName}`.trim()}
     >
       <div
-        className={`mx-auto flex h-16 w-full max-w-120 items-center gap-3 px-4 ${containerClassName}`.trim()}
+        className={`mx-auto flex h-16 w-full max-w-[var(--app-max-width)] items-center gap-3 px-4 ${containerClassName}`.trim()}
       >
         <Link
           href={backHref}

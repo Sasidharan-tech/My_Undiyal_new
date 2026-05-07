@@ -48,7 +48,7 @@ export default function SchemePage() {
     <MainLayout
       title="All Scheme"
       backHref={`/product/${item.id}`}
-      className="relative max-w-103 bg-white"
+      className="relative max-w-120 bg-white"
       contentClassName="relative px-4 pb-6"
     >
       <div className="pointer-events-none absolute inset-x-0 top-43.25 bottom-0 bg-linear-to-b from-[rgba(255,248,242,0)] to-[#FFF5ED]" />
